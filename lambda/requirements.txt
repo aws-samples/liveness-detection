@@ -1,0 +1,3 @@
+aws-lambda-powertools
+PyJWT
+numpy

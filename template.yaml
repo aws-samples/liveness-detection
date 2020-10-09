@@ -1,0 +1,129 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  FramesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  StaticWebsiteBucket:
+    Type: AWS::S3::Bucket
+
+  ChallengesTable:
+    Type: AWS::Serverless::SimpleTable
+
+  TokenSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      GenerateSecretString: {}
+
+  ChallengeApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowOrigin: "'*'"
+        AllowMethods: "'*'"
+        AllowHeaders: "'*'"
+
+  ChallengeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Role: !GetAtt ChallengeFunctionRole.Arn
+      Timeout: 120
+      Environment:
+        Variables:
+          REGION_NAME: !Ref AWS::Region
+          BUCKET_NAME: !Ref FramesBucket
+          DDB_TABLE: !Ref ChallengesTable
+          TOKEN_SECRET_ARN: !Ref TokenSecret
+      Events:
+        StartChallenge:
+          Type: Api
+          Properties:
+            Path: /challenge/start
+            Method: post
+            RestApiId: !Ref ChallengeApi
+        PutChallengeFrame:
+          Type: Api
+          Properties:
+            Path: /challenge/{challengeId}/frames
+            Method: put
+            RestApiId: !Ref ChallengeApi
+        VerifyChallenge:
+          Type: Api
+          Properties:
+            Path: /challenge/{challengeId}/verify
+            Method: post
+            RestApiId: !Ref ChallengeApi
+
+  ChallengeFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - arn:aws:iam::aws:policy/AmazonRekognitionFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+
+  CloudFrontOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: "S3 CloudFront OAI"
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        DefaultCacheBehavior:
+          ForwardedValues:
+            QueryString: false
+          TargetOriginId: the-s3-bucket
+          ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: index.html
+        Enabled: true
+        Origins:
+          - DomainName: !Sub "${StaticWebsiteBucket}.s3.amazonaws.com"
+            Id: the-s3-bucket
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}"
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref StaticWebsiteBucket
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:GetObject
+            Effect: Allow
+            Resource: !Sub "arn:aws:s3:::${StaticWebsiteBucket}/*"
+            Principal:
+              CanonicalUser: !GetAtt CloudFrontOriginAccessIdentity.S3CanonicalUserId
+
+Outputs:
+  ApiUrl:
+    Description: The API URL
+    Value: !Sub 'https://${ChallengeApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/challenge/'
+  StaticWebsiteUrl:
+    Description: The static website URL
+    Value: !Sub "https://${CloudFrontDistribution.DomainName}/"
+  StaticWebsiteBucket:
+    Description: The static website S3 bucket
+    Value: !Ref StaticWebsiteBucket
