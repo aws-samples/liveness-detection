@@ -60,7 +60,7 @@ The command above creates a CloudFormation stack with the following outputs: `Ap
  perl -i -pe 's/face_landmark_68_model-shard1/face_landmark_68_model-shard1.shard/g' public/weights/face_landmark_68_model-weights_manifest.json
  ```
 
-4. Open the `.env` file and replace the value of `VUE_APP_API_URL` with the API URL (`ApiUrl`) outputed during the bakend deployment.
+4. Open the `.env` file and replace the value of `VUE_APP_API_URL` with the API URL (`ApiUrl`) outputted during the backend deployment.
 
 5. Run the comamand below to build the frontend:
 
@@ -68,13 +68,13 @@ The command above creates a CloudFormation stack with the following outputs: `Ap
  npm install && npm run build
  ```
 
-6. Copy the static frontend files with the following command (replace `{YOUR_BUCKET}` with the bucket name - `StaticWebsiteBucket` - outputed during the bakend deployment):
+6. Copy the static frontend files with the following command (replace `{YOUR_BUCKET}` with the bucket name - `StaticWebsiteBucket` - outputted during the backend deployment):
 
  ```
  aws s3 cp dist s3://{YOUR_BUCKET}/ --recursive
  ```
 
-Open your browser and navigate to the CloudFront URL (`StaticWebsiteUrl`) outputed during the bakend deployment.
+Open your browser and navigate to the CloudFront URL (`StaticWebsiteUrl`) outputted during the backend deployment.
 
 ## Security
 
