@@ -76,6 +76,36 @@ The command above creates a CloudFormation stack with the following outputs: `Ap
 
 Open your browser and navigate to the CloudFront URL (`StaticWebsiteUrl`) outputted during the backend deployment.
 
+## Clean up (Optional)
+
+If you don't want to continue using the application, take the following steps to clean up its resources and avoid further charges.
+
+### Empty the Amazon S3 buckets
+
+Before you can delete a bucket, you must first delete its contents.
+
+1. Sign in to the AWS Management Console and open the Amazon S3 console at [https://console.aws.amazon.com/s3](https://console.aws.amazon.com/s3).
+
+2. In the **Bucket name** list, select the option next to the *StaticWebsiteBucket* and then choose **Empty**.
+
+3. On the **Empty bucket** page, confirm that you want to empty the bucket by entering the bucket name into the text field, and then choose **Empty**.
+
+4. In the **Bucket name** list, select the option next to the *FramesBucket* and then choose **Empty**.
+
+5. On the **Empty bucket** page, confirm that you want to empty the bucket by entering the bucket name into the text field, and then choose **Empty**.
+
+### Delete the CloudFormation stack
+
+AWS CloudFormation makes it easy to clean up resources that the stack created. When you delete the stack, all resources that the stack created are deleted.
+
+1. Open the AWS CloudFormation console at [https://console.aws.amazon.com/cloudformation](https://console.aws.amazon.com/cloudformation).
+
+2. On the **Stacks** page in the CloudFormation console, select the stack you deployed during the Backend setup.
+
+3. In the stack details pane, choose **Delete**.
+
+4. Select **Delete stack** when prompted.
+
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
