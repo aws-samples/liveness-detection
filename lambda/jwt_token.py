@@ -16,11 +16,11 @@ class Token:
         payload = {
             'challengeId': self.challenge_id
         }
-        return jwt.encode(payload, self.secret, algorithm=Token.JWT_ALGORITHM).decode('utf-8')
+        return jwt.encode(payload, self.secret, algorithm=Token.JWT_ALGORITHM)
 
     def verify_jwt(self, token):
         try:
-            decoded = jwt.decode(token, self.secret, algorithm=Token.JWT_ALGORITHM)
+            decoded = jwt.decode(token, self.secret, algorithms=Token.JWT_ALGORITHM)
             return decoded['challengeId'] == self.challenge_id
         except jwt.exceptions.InvalidTokenError:
             return False
