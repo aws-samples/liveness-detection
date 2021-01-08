@@ -38,6 +38,7 @@ Resources:
       Runtime: python3.7
       Role: !GetAtt ChallengeFunctionRole.Arn
       Timeout: 120
+      MemorySize: 512
       Environment:
         Variables:
           REGION_NAME: !Ref AWS::Region
