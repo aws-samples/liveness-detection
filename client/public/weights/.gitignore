@@ -1,0 +1,4 @@
+# Ignore all contents of this folder (recursively), but keep this gitignore file:
+*
+*/
+!.gitignore
