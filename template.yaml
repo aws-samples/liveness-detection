@@ -101,7 +101,7 @@ Resources:
         DefaultRootObject: index.html
         Enabled: true
         Origins:
-          - DomainName: !Sub "${StaticWebsiteBucket}.s3.amazonaws.com"
+          - DomainName: !Sub "${StaticWebsiteBucket}.s3.${AWS::Region}.amazonaws.com"
             Id: the-s3-bucket
             S3OriginConfig:
               OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}"
