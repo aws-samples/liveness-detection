@@ -5,6 +5,8 @@ Resources:
   FramesBucket:
     Type: AWS::S3::Bucket
     Properties:
+      VersioningConfiguration:
+        Status: Enabled
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
@@ -13,6 +15,8 @@ Resources:
   StaticWebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
+      VersioningConfiguration:
+        Status: Enabled
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
