@@ -1,5 +1,7 @@
 # Liveness Detection
 
+> Check the [Liveness Detection Framework](https://aws.amazon.com/solutions/implementations/liveness-detection-framework/), a solution that helps you implement liveness detection mechanisms into your applications by means of an extensible architecture. The solution is available in the AWS Solutions Implementations website and its code is available in a [GitHub repo](https://github.com/aws-solutions/liveness-detection-framework).
+
 ## Note
 
 * The solution provided here is not secure against all spoofing. Therefore, before deploying to production, thoroughly
